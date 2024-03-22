@@ -1,0 +1,28 @@
+carla需要低配置运行
+CUDA_VISIBLE_DEVICES=0 carla/CarlaUE4.sh --world-port=2000 -opengl -prefernvidia -quality-level=low
+
+pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
+
+pkill -9 python
+
+conda install -c conda-forge scikit-sparse
+
+conda install -c conda-forge libstdcxx-ng=12
+
+python data_process.py \
+--data_path /media/xingchen24/xingchen4T/datasets/nuplan/datasets/nuplan-v1.1/splits/mini \
+--map_path /media/xingchen24/xingchen4T/datasets/nuplan/datasets/maps \
+--save_path /media/xingchen24/xingchen4T/datasets/nuplan/datasets/nuplan/processed_data
+
+python train_predictor.py \
+--train_set /media/xingchen24/xingchen4T/datasets/nuplan/datasets/nuplan/processed_data/train \
+--valid_set /media/xingchen24/xingchen4T/datasets/nuplan/datasets/nuplan/processed_data/val
+
+
+python run_nuplan_test.py \
+--experiment_name closed_loop_nonreactive_agents \
+--data_path /media/xingchen24/xingchen/datasets/nuplan/datasets/nuplan-v1.1/splits/mini  \
+--map_path /media/xingchen24/xingchen/datasets/nuplan/datasets/maps \
+--model_path /home/xingchen24/code/deeplearning/imitation_learning/GameFormer-Planner-xc-2/training_log/Exp1-plantf-1211-lre-4/model_epoch_40_valADE_0.5845.pth
+
+
